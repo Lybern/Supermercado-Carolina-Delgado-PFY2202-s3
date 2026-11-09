@@ -272,8 +272,8 @@ function ListadoInventario() {
                         </div>
                       </td>
                       <td className="text-center">
-                        <span className={`badge ${estado.claseBadge}`}>
-                          {estado.texto}
+                        <span className={`badge ${estado.badgeClass || estado.claseBadge}`}>
+                          {estado.estado || estado.texto}
                         </span>
                       </td>
                       <td className="small text-muted">{item.ubicacion}</td>

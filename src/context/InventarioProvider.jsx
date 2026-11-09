@@ -1,6 +1,7 @@
 import { useState } from "react";
 import InventarioContext from "./InventarioContext";
 import { productosIniciales } from "../data/inventarioData";
+import { validarProducto } from "../utils/inventarioUtils";
 
 /**
  * Inicializador de estado que realiza una copia superficial inmutable de los datos base.
@@ -21,44 +22,18 @@ export function InventarioProvider({ children }) {
    * Realiza validaciones de obligatoriedad, tipos de datos y SKU único.
    */
   const agregarProducto = (nuevo) => {
-    // 1. Validar campos obligatorios (Semana 2 Forma B: Nombre, Marca, Categoría, Precio, Stock)
-    if (
-      !nuevo.sku?.trim() ||
-      !nuevo.nombre?.trim() ||
-      !nuevo.marca?.trim() ||
-      nuevo.precio === "" ||
-      nuevo.precio === null ||
-      nuevo.stock === "" ||
-      nuevo.stock === null
-    ) {
+    // 1. Validar producto con expresiones regulares y reglas de negocio
+    const validacion = validarProducto(nuevo, productos);
+    if (!validacion.esValido) {
       return {
         exito: false,
-        mensaje: "Debes completar todos los campos obligatorios (*), incluyendo la marca del producto.",
+        mensaje: validacion.errores.join(" "),
       };
     }
 
-    // 2. Validar que el SKU no esté duplicado
-    const existeSku = productos.some(
-      (p) => p.sku.trim().toUpperCase() === nuevo.sku.trim().toUpperCase()
-    );
-    if (existeSku) {
-      return {
-        exito: false,
-        mensaje: `El código SKU "${nuevo.sku.trim().toUpperCase()}" ya se encuentra registrado. Ingresa un código diferente.`,
-      };
-    }
-
-    // 3. Validar números no negativos
     const precioNum = Number(nuevo.precio);
     const stockNum = Number(nuevo.stock);
     const stockMinNum = Number(nuevo.stockMinimo) || 0;
-
-    if (isNaN(precioNum) || isNaN(stockNum) || precioNum < 0 || stockNum < 0 || stockMinNum < 0) {
-      return {
-        exito: false,
-        mensaje: "El precio y el stock deben ser números válidos mayores o iguales a cero.",
-      };
-    }
 
     // 4. Construir objeto inmutable con ID único seguro
     const nuevoItem = {
