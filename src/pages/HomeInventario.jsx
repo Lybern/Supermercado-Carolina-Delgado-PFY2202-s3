@@ -12,7 +12,7 @@ import {
 
 /**
  * Panel Principal de Control de Inventario.
- * Modularizado en componentes pequeños (<100 líneas) resolviendo las oportunidades 3 y 5 de la pauta.
+ * Gestiona métricas ejecutivas, filtros y vista rápida del catálogo.
  */
 function HomeInventario() {
   const { productos, modificarStock } = useInventario();

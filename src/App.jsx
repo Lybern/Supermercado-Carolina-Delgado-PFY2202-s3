@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import HomeInventario from "./pages/HomeInventario";
 import ListadoInventario from "./pages/ListadoInventario";
 import NuevoProducto from "./pages/NuevoProducto";
+import DetalleProducto from "./pages/DetalleProducto";
 import NuestrasTiendas from "./pages/NuestrasTiendas";
 import QuienesSomos from "./pages/QuienesSomos";
 import Contactanos from "./pages/Contactanos";
@@ -26,9 +27,10 @@ function App() {
             {/* Panel Principal */}
             <Route path="/" element={<HomeInventario />} />
 
-            {/* Requerimientos evaluativos Semana 2 Forma B */}
+            {/* Gestión de Inventario y Catálogo */}
             <Route path="/inventario" element={<ListadoInventario />} />
             <Route path="/nuevo-producto" element={<NuevoProducto />} />
+            <Route path="/producto/:id" element={<DetalleProducto />} />
 
             {/* Rutas institucionales adicionales */}
             <Route path="/tiendas" element={<NuestrasTiendas />} />
@@ -40,7 +42,7 @@ function App() {
           </Routes>
         </main>
 
-        {/* Menú Inferior de Navegación Requerido por la Pauta Formativa */}
+        {/* Menú Inferior de Navegación */}
         <BottomNav />
 
         {/* Pie de página institucional */}

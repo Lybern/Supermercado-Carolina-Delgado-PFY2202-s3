@@ -73,7 +73,6 @@ export const formatearMoneda = (valor) => {
 
 /**
  * Valida los datos de un artículo mediante expresiones regulares y reglas de negocio.
- * Resuelve la oportunidad de mejora 1 de la pauta formativa.
  * @param {Object} producto
  * @param {Array} productosExistentes
  * @returns {{ esValido: boolean, errores: string[] }}
@@ -148,8 +147,7 @@ export const validarProducto = (producto, productosExistentes = []) => {
 };
 
 /**
- * Filtra la colección de productos de forma pura y reactiva según criterios combinados.
- * Resuelve la oportunidad de mejora 4 y cumple el criterio 2 de la pauta sumativa.
+ * Filtra la colección de productos de forma pura según texto, categoría y nivel de stock.
  * @param {Array} productos
  * @param {{ busqueda?: string, categoria?: string, soloCriticos?: boolean }} filtros
  * @returns {Array} Nueva colección filtrada sin mutar el arreglo original.
@@ -179,7 +177,6 @@ export const filtrarProductos = (productos = [], filtros = {}) => {
 
 /**
  * Calcula las métricas ejecutivas consolidadas del inventario (KPIs).
- * Resuelve la oportunidad de mejora 4 unificando la fuente de cálculo para toda la app.
  * @param {Array} productos
  * @returns {{ totalProductos: number, totalUnidades: number, stockCriticoCount: number, valorTotalInventario: number }}
  */

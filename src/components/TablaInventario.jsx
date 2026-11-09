@@ -6,9 +6,8 @@ import {
 } from "../utils/inventarioUtils";
 
 /**
- * Componente modular: Tabla de Inventario de Supermercado.
- * Resuelve la oportunidad de mejora 5 de la pauta y soporta navegación al detalle para Semana 3 (<150 líneas).
- * @param {{ productos: Array, onModificarStock: Function, mostrarLinkDetalle?: boolean }} props
+ * Tabla de Inventario de Supermercado.
+ * Muestra el catálogo de artículos con stock, estado y acceso a detalle.
  */
 function TablaInventario({ productos = [], onModificarStock, mostrarLinkDetalle = true }) {
   if (productos.length === 0) {

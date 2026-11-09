@@ -1,6 +1,6 @@
 /**
- * Componente modular: Barra de Búsqueda y Filtros de Inventario.
- * Resuelve la oportunidad de mejora 5 desacoplando la interfaz de filtrado (<150 líneas).
+ * Barra de Búsqueda y Filtros de Inventario.
+ * Filtra de manera reactiva por texto, categoría y nivel de stock.
  */
 function FiltrosInventario({
   busqueda,

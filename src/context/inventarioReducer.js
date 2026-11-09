@@ -1,6 +1,5 @@
 /**
- * Tipos de acción formales para la máquina de estados de inventario y carrito.
- * Sigue la arquitectura de useReducer enseñada por el profesor en la Semana 3.
+ * Tipos de acción para la gestión de inventario y carrito.
  */
 export const TIPOS_ACCION = {
   AGREGAR_PRODUCTO: "AGREGAR_PRODUCTO",

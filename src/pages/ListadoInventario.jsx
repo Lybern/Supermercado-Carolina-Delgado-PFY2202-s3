@@ -12,9 +12,8 @@ import {
 } from "../utils/inventarioUtils";
 
 /**
- * Página dedicada: Listado en Tabla del Inventario.
- * Requisito evaluativo de la Semana 2 (Forma B) y Semana 3.
- * Modularizada en componentes pequeños (<150 líneas).
+ * Vista dedicada: Listado en Tabla del Inventario.
+ * Permite buscar, filtrar y gestionar existencias de los artículos.
  */
 function ListadoInventario() {
   const { productos, modificarStock } = useInventario();
