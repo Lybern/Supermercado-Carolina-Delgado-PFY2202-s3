@@ -9,6 +9,7 @@ import HomeInventario from "./pages/HomeInventario";
 import ListadoInventario from "./pages/ListadoInventario";
 import NuevoProducto from "./pages/NuevoProducto";
 import DetalleProducto from "./pages/DetalleProducto";
+import Carrito from "./pages/Carrito";
 import NuestrasTiendas from "./pages/NuestrasTiendas";
 import QuienesSomos from "./pages/QuienesSomos";
 import Contactanos from "./pages/Contactanos";
@@ -31,6 +32,7 @@ function App() {
             <Route path="/inventario" element={<ListadoInventario />} />
             <Route path="/nuevo-producto" element={<NuevoProducto />} />
             <Route path="/producto/:id" element={<DetalleProducto />} />
+            <Route path="/carrito" element={<Carrito />} />
 
             {/* Rutas institucionales adicionales */}
             <Route path="/tiendas" element={<NuestrasTiendas />} />
