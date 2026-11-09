@@ -1,45 +1,63 @@
-# Supermercado Don Ahorro (Eri Market) - Control de Inventario 🛒🐾
+# Supermercado Don Ahorro (Eri Market) - Gestión de Inventario y Carrito 🛒🐾
 
-Proyecto desarrollado para la **Evaluación Formativa Semana 2 (Forma B)** de la asignatura **Desarrollo Frontend II (PFY2202)** en Duoc UC.
+Aplicación web interactiva desarrollada con **React 19**, **React Router**, **Vite** y **Bootstrap 5**, diseñada para la administración integral de existencias, catálogo de productos y simulación de reservas mediante carrito de compras.
 
 - **Estudiante:** Carolina Delgado
-- **Repositorio Oficial:** [Supermercado-Carolina-Delgado-PFY2202](https://github.com/Lybern/Supermercado-Carolina-Delgado-PFY2202)
-- **Stack Tecnológico:** React 19, React Router, Context API, Bootstrap 5, Vite
+- **Repositorio Oficial:** [Supermercado-Carolina-Delgado-PFY2202-s3](https://github.com/Lybern/Supermercado-Carolina-Delgado-PFY2202-s3)
+- **Despliegue en GitHub Pages:** [Ver Aplicación en Vivo](https://lybern.github.io/Supermercado-Carolina-Delgado-PFY2202-s3/)
 
 ---
 
-## 🎯 Requerimientos y Mejoras Implementadas (Semana 2 - Forma B)
+## 🚀 Características Principales
 
-### 1. Gestión de Estado Global con Context API (40 pts)
-- **`InventarioContext.js`:** Contexto centralizado creado de forma modular y desacoplada para soporte de Fast Refresh.
-- **`InventarioProvider.jsx`:** Proveedor que envuelve toda la aplicación (`App.jsx`). Administra la lista de productos en memoria asegurando que los datos persistan durante la navegación entre rutas.
-- **`useInventario.js`:** Hook personalizado para consumo directo del estado global con validación de contexto activo.
-- **Inmutabilidad:** Operaciones de agregado (`agregarProducto`) y ajuste de existencias (`modificarStock`) implementadas mediante técnicas de actualización inmutable (`[...previos, nuevo]`, `.map()`).
+### 1. Gestión de Estado Global con `useReducer` y Context API
+* **Transacciones Atómicas:** Unificación de `productos` (inventario) y `carrito` bajo un único gobernador de estado (`inventarioReducer.js`).
+* **Ley de Conservación de Stock:** Al agregar un artículo al carrito, se descuenta de forma atómica e inmediata una unidad de sus existencias disponibles en inventario. Al devolver unidades en el carrito, el stock se reintegra en tiempo real.
+* **Eliminación Automática:** Si la cantidad de un artículo en el carrito llega a cero (`0`), se remueve automáticamente de la lista con `.filter()`.
+* **Persistencia en Memoria:** Estado preservado durante toda la navegación de la SPA gracias a `InventarioProvider`.
 
-### 2. Atributos Requeridos por Caso Supermercado (Forma B)
-- **Campo Obligatorio `marca`:** Se incorporó el atributo `marca` tanto en la fuente de datos base ([`inventarioData.js`](file:///C:/Users/Carolina/Desktop/Noveno%20bimestre/Desarrollo%20Frontend%20II/Exp1%20S2/Exp1_S2_CarolinaDelgado/src/data/inventarioData.js)), como en las columnas de la tabla y en el formulario de registro.
-- **Tipos de producto (categorías):** Centralizados en una constante única para evitar discrepancias.
+### 2. Filtrado y Búsqueda Reactiva sin Mutación
+* **Cálculo Derivado:** La función pura `filtrarProductos` procesa en tiempo de render las coincidencias por texto (SKU, nombre, marca), categoría temática y alerta de stock crítico sin alterar el arreglo original de datos.
+* **Componente Modular:** Interfaz de filtrado desacoplada en `FiltrosInventario.jsx` para reutilización coherente.
 
-### 3. Vistas Dedicadas y Enrutamiento con React Router
-- **`/` (Panel de Control):** Vista general con métricas ejecutivas, accesos rápidos y panel de gestión.
-- **`/inventario` (Listado en Tabla):** Vista tabular dedicada que consume el estado global, con KPIs ([`KpiCard.jsx`](file:///C:/Users/Carolina/Desktop/Noveno%20bimestre/Desarrollo%20Frontend%20II/Exp1%20S2/Exp1_S2_CarolinaDelgado/src/components/KpiCard.jsx)), filtros dinámicos por texto/categoría, alerta de stock crítico y botones de ajuste de existencias.
-- **`/nuevo-producto` (Ingresar Artículos):** Página independiente con formulario estructurado, validaciones en tiempo real (SKU único, obligatoriedad, control contra números negativos) y alertas visuales Bootstrap.
-- **`/tiendas`, `/quienes-somos`, `/contactanos`:** Páginas informativas del supermercado.
-- **`*` (Error 404):** Vista amigable [`NotFound.jsx`](file:///C:/Users/Carolina/Desktop/Noveno%20bimestre/Desarrollo%20Frontend%20II/Exp1%20S2/Exp1_S2_CarolinaDelgado/src/pages/NotFound.jsx) para destinos no reconocidos.
+### 3. Ficha Técnica y Detalle Dinámico (`/producto/:id`)
+* **Navegación con `useParams`:** Extracción de parámetros de ruta dinámica en React Router.
+* **Control de Existencias:** Botón interactivo condicional que se deshabilita automáticamente cuando el stock del producto llega a cero (`disabled={stock === 0}`).
+* **Accesibilidad:** Notificaciones y confirmaciones de estado con atributos `aria-live="polite"`.
 
-### 4. Modularidad y Buenas Prácticas (Retroalimentación Docente)
-- **Principio DRY en KPIs:** Componente reutilizable [`KpiCard.jsx`](file:///C:/Users/Carolina/Desktop/Noveno%20bimestre/Desarrollo%20Frontend%20II/Exp1%20S2/Exp1_S2_CarolinaDelgado/src/components/KpiCard.jsx) parametrizado por props.
-- **Lógica de negocio unificada:** [`inventarioUtils.js`](file:///C:/Users/Carolina/Desktop/Noveno%20bimestre/Desarrollo%20Frontend%20II/Exp1%20S2/Exp1_S2_CarolinaDelgado/src/utils/inventarioUtils.js) centraliza `esStockCritico`, `obtenerEstadoStock` y `formatearMoneda`.
-- **Generación de ID segura:** Uso de `crypto.randomUUID()` para evitar colisiones.
+### 4. Carrito de Compras Interactivo (`/carrito`)
+* **Gestión de Unidades:** Controles para aumentar (`+`) y disminuir (`-`) cantidades por artículo.
+* **Cálculo Automático:** Desglose de subtotales, conteo total de unidades reservadas y valorización final en Pesos Chilenos (CLP).
+* **Contador en Navegación:** Indicadores numéricos en tiempo real en la barra superior (`Header`) y en el menú inferior (`BottomNav`).
+
+### 5. Validaciones Robustas con Expresiones Regulares
+* **SKU:** Formato alfanumérico en mayúsculas obligatorio (ej: `ABA-001`, `LAC-102`) y verificación contra duplicados.
+* **Nombre y Marca:** Validación de longitud mínima/máxima y saneamiento contra inyección de caracteres especiales o código malicioso.
+* **Numéricos:** Comprobación estricta de precio positivo y stock entero no negativo.
+
+### 6. Arquitectura Modular y Código Limpio
+* **Separación de Responsabilidades:** Distribución estricta en carpetas `components/`, `context/`, `data/`, `hooks/`, `pages/` y `utils/`.
+* **Componentes Livianos:** Todos los archivos y vistas se mantienen por debajo de las 150 líneas de código para máxima legibilidad y facilidad de mantenimiento.
 
 ---
 
-## 🚀 Instalación y Ejecución Local
+## 🛠️ Tecnologías Utilizadas
+
+* **React 19:** Biblioteca base para interfaces de usuario declarativas.
+* **React Router:** Enrutamiento SPA con rutas dinámicas y navegación sin recargas.
+* **Bootstrap 5:** Framework CSS para maquetación adaptable, componentes responsive y paleta visual accesible.
+* **Vite:** Herramienta de compilación y servidor de desarrollo ultrarrápido.
+
+---
+
+## 📦 Instalación y Ejecución Local
+
+Para clonar y ejecutar este proyecto en tu entorno local:
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/Lybern/Supermercado-Carolina-Delgado-PFY2202.git
-   cd Supermercado-Carolina-Delgado-PFY2202
+   git clone https://github.com/Lybern/Supermercado-Carolina-Delgado-PFY2202-s3.git
+   cd Supermercado-Carolina-Delgado-PFY2202-s3
    ```
 
 2. **Instalar dependencias:**
@@ -51,6 +69,7 @@ Proyecto desarrollado para la **Evaluación Formativa Semana 2 (Forma B)** de la
    ```bash
    npm run dev
    ```
+   Abre [http://localhost:5173/](http://localhost:5173/) en tu navegador.
 
 4. **Compilar para producción:**
    ```bash
@@ -64,29 +83,36 @@ Proyecto desarrollado para la **Evaluación Formativa Semana 2 (Forma B)** de la
 ```text
 src/
 ├── components/
-│   ├── BottomNav.jsx         # Menú inferior con React Router NavLink
-│   ├── Header.jsx            # Encabezado institucional y navegación superior
+│   ├── BottomNav.jsx         # Menú inferior con enlace activo y contador de carrito
+│   ├── FiltrosInventario.jsx # Barra modular de búsqueda y selector de categorías
 │   ├── Footer.jsx            # Pie de página institucional
-│   ├── KpiCard.jsx           # Tarjeta modular reutilizable de indicadores (DRY)
-│   └── OrangeTabbyCat.jsx    # Mascota institucional del supermercado
+│   ├── Header.jsx            # Encabezado superior con botón de carrito dinámico
+│   ├── ItemCarrito.jsx       # Componente modular para fila de producto en carrito
+│   ├── KpiCard.jsx           # Tarjeta modular de indicador clave
+│   ├── KpiResumen.jsx        # Grilla modular de métricas ejecutivas
+│   ├── OrangeTabbyCat.jsx    # Mascota institucional del supermercado
+│   └── TablaInventario.jsx   # Tabla modular de catálogo con acceso a detalle
 ├── context/
-│   ├── InventarioContext.js  # Contexto global
-│   └── InventarioProvider.jsx # Proveedor de estado global e inmutabilidad
+│   ├── InventarioContext.js  # Definición desacoplada del contexto global
+│   ├── InventarioProvider.jsx # Proveedor global que implementa useReducer
+│   └── inventarioReducer.js  # Reducer puro con transacciones atómicas
 ├── data/
-│   └── inventarioData.js     # Datos iniciales, categorías y constantes
+│   └── inventarioData.js     # Catálogo inicial de productos y constantes
 ├── hooks/
 │   └── useInventario.js      # Hook personalizado para consumo del contexto
 ├── pages/
-│   ├── HomeInventario.jsx    # Panel de control de inventario
-│   ├── ListadoInventario.jsx # Vista dedicada: Listado en tabla de artículos
-│   ├── NuevoProducto.jsx     # Vista dedicada: Formulario de ingreso de artículos
-│   ├── NuestrasTiendas.jsx   # Información de sucursales y bodegas
-│   ├── QuienesSomos.jsx      # Misión, visión e historia institucional
-│   ├── Contactanos.jsx       # Canales de soporte y formulario
-│   └── NotFound.jsx          # Manejo de error 404 para rutas desconocidas
+│   ├── Carrito.jsx           # Pantalla de carrito de compras y resumen de pedido
+│   ├── Contactanos.jsx       # Página institucional de contacto
+│   ├── DetalleProducto.jsx   # Vista de detalle con useParams y botón condicional
+│   ├── HomeInventario.jsx    # Panel principal de control de existencias
+│   ├── ListadoInventario.jsx # Vista tabular completa del inventario
+│   ├── NotFound.jsx          # Manejo de error 404 para rutas desconocidas
+│   ├── NuestrasTiendas.jsx   # Información de sucursales físicas y bodegas
+│   ├── NuevoProducto.jsx     # Formulario de registro con validaciones regex
+│   └── QuienesSomos.jsx      # Misión, visión e historia institucional
 ├── utils/
-│   └── inventarioUtils.js    # Funciones utilitarias y reglas de stock centralizadas
-├── App.jsx                   # Layout global, enrutamiento y envoltura con Context
-├── main.jsx                  # Entrada principal y BrowserRouter
-└── index.css                 # Estilos y temas
+│   └── inventarioUtils.js    # Funciones puras de cálculo, validación y filtros
+├── App.jsx                   # Layout principal y declaración de rutas
+├── main.jsx                  # Entrada raíz con BrowserRouter y basename de Vite
+└── index.css                 # Estilos personalizados y utilidades de diseño
 ```
