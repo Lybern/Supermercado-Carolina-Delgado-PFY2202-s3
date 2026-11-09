@@ -11,6 +11,8 @@ import {
   esStockCritico,
   obtenerEstadoStock,
   formatearMoneda,
+  filtrarProductos,
+  calcularMetricasInventario,
 } from "../utils/inventarioUtils";
 
 function HomeInventario() {
@@ -51,26 +53,19 @@ function HomeInventario() {
     });
   };
 
-  // Filtrado de productos
-  const productosFiltrados = productos.filter((p) => {
-    const coincideTexto =
-      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.sku.toLowerCase().includes(busqueda.toLowerCase());
-    const coincideCategoria =
-      categoriaSeleccionada === "Todas" || p.categoria === categoriaSeleccionada;
-    const esCritico = esStockCritico(p);
-    const coincideCritico = soloCriticos ? esCritico : true;
-
-    return coincideTexto && coincideCategoria && coincideCritico;
+  // Filtrado reactivo puro mediante utilidad centralizada
+  const productosFiltrados = filtrarProductos(productos, {
+    busqueda,
+    categoria: categoriaSeleccionada,
+    soloCriticos,
   });
 
   // Métricas para los KPI cards (reglas centralizadas)
-  const totalItems = productos.length;
-  const itemsCriticos = productos.filter(esStockCritico).length;
-  const valorTotalInventario = productos.reduce(
-    (acc, curr) => acc + curr.precio * curr.stock,
-    0
-  );
+  const {
+    totalProductos: totalItems,
+    stockCriticoCount: itemsCriticos,
+    valorTotalInventario,
+  } = calcularMetricasInventario(productos);
 
   return (
     <div className="container py-4">

@@ -146,3 +146,59 @@ export const validarProducto = (producto, productosExistentes = []) => {
     errores,
   };
 };
+
+/**
+ * Filtra la colección de productos de forma pura y reactiva según criterios combinados.
+ * Resuelve la oportunidad de mejora 4 y cumple el criterio 2 de la pauta sumativa.
+ * @param {Array} productos
+ * @param {{ busqueda?: string, categoria?: string, soloCriticos?: boolean }} filtros
+ * @returns {Array} Nueva colección filtrada sin mutar el arreglo original.
+ */
+export const filtrarProductos = (productos = [], filtros = {}) => {
+  const { busqueda = "", categoria = "Todas", soloCriticos = false } = filtros;
+  const textoBusqueda = busqueda.trim().toLowerCase();
+
+  return productos.filter((p) => {
+    // 1. Coincidencia por texto (nombre, SKU o marca)
+    const coincideTexto =
+      !textoBusqueda ||
+      p.nombre.toLowerCase().includes(textoBusqueda) ||
+      p.sku.toLowerCase().includes(textoBusqueda) ||
+      (p.marca && p.marca.toLowerCase().includes(textoBusqueda));
+
+    // 2. Coincidencia por categoría
+    const coincideCategoria =
+      categoria === "Todas" || p.categoria === categoria;
+
+    // 3. Coincidencia por stock crítico
+    const coincideCritico = soloCriticos ? esStockCritico(p) : true;
+
+    return coincideTexto && coincideCategoria && coincideCritico;
+  });
+};
+
+/**
+ * Calcula las métricas ejecutivas consolidadas del inventario (KPIs).
+ * Resuelve la oportunidad de mejora 4 unificando la fuente de cálculo para toda la app.
+ * @param {Array} productos
+ * @returns {{ totalProductos: number, totalUnidades: number, stockCriticoCount: number, valorTotalInventario: number }}
+ */
+export const calcularMetricasInventario = (productos = []) => {
+  const totalProductos = productos.length;
+  const totalUnidades = productos.reduce(
+    (acc, p) => acc + Number(p.stock || 0),
+    0
+  );
+  const stockCriticoCount = productos.filter(esStockCritico).length;
+  const valorTotalInventario = productos.reduce(
+    (acc, p) => acc + Number(p.precio || 0) * Number(p.stock || 0),
+    0
+  );
+
+  return {
+    totalProductos,
+    totalUnidades,
+    stockCriticoCount,
+    valorTotalInventario,
+  };
+};

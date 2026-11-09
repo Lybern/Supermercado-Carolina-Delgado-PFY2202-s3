@@ -9,6 +9,8 @@ import {
   esStockCritico,
   obtenerEstadoStock,
   formatearMoneda,
+  filtrarProductos,
+  calcularMetricasInventario,
 } from "../utils/inventarioUtils";
 
 /**
@@ -27,29 +29,20 @@ function ListadoInventario() {
   // Categorías para el filtro
   const categorias = ["Todas", ...CATEGORIAS_INVENTARIO];
 
-  // Filtrado reactivo en tiempo real
-  const productosFiltrados = productos.filter((p) => {
-    const coincideBusqueda =
-      p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.sku.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.marca.toLowerCase().includes(busqueda.toLowerCase());
-
-    const coincideCategoria =
-      categoriaSeleccionada === "Todas" || p.categoria === categoriaSeleccionada;
-
-    const coincideCritico = soloCriticos ? esStockCritico(p) : true;
-
-    return coincideBusqueda && coincideCategoria && coincideCritico;
+  // Filtrado reactivo puro mediante utilidad centralizada
+  const productosFiltrados = filtrarProductos(productos, {
+    busqueda,
+    categoria: categoriaSeleccionada,
+    soloCriticos,
   });
 
-  // Cálculo de KPIs a partir del estado global
-  const totalProductos = productos.length;
-  const totalUnidades = productos.reduce((acc, p) => acc + p.stock, 0);
-  const stockCriticoCount = productos.filter(esStockCritico).length;
-  const valorTotalInventario = productos.reduce(
-    (acc, p) => acc + p.precio * p.stock,
-    0
-  );
+  // Métricas ejecutivas derivadas de la fuente de verdad centralizada
+  const {
+    totalProductos,
+    totalUnidades,
+    stockCriticoCount,
+    valorTotalInventario,
+  } = calcularMetricasInventario(productos);
 
   return (
     <div className="container py-4">
