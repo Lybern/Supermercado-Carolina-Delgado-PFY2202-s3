@@ -18,7 +18,7 @@ import NotFound from "./pages/NotFound";
 function App() {
   return (
     <InventarioProvider>
-      <div className="d-flex flex-column min-vh-100 bg-body-tertiary">
+      <div className="d-flex flex-column min-vh-100 app-wrapper">
         {/* Encabezado Superior con Identidad Institucional */}
         <Header />
 

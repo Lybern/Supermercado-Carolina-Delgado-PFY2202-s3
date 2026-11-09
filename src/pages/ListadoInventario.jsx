@@ -73,10 +73,18 @@ function ListadoInventario() {
 
       {/* Tarjetas KPI de Resumen */}
       <div className="row g-3 mb-4">
-        <KpiCard titulo="Total Artículos" valor={totalProductos} icono="📦" color="primary" descripcion="Artículos únicos en catálogo" />
-        <KpiCard titulo="Unidades Físicas" valor={totalUnidades.toLocaleString("es-CL")} icono="🔢" color="info" descripcion="Total unidades en almacén" />
-        <KpiCard titulo="Stock Crítico" valor={stockCriticoCount} icono="⚠️" color="danger" descripcion="Productos bajo el mínimo" />
-        <KpiCard titulo="Valor Estimado" valor={formatearMoneda(valorTotalInventario)} icono="💰" color="success" descripcion="Capital total inmovilizado" />
+        <div className="col-12 col-sm-6 col-lg-3">
+          <KpiCard titulo="Total Artículos" valor={totalProductos} icono="📦" color="primary" descripcion="Artículos únicos en catálogo" />
+        </div>
+        <div className="col-12 col-sm-6 col-lg-3">
+          <KpiCard titulo="Unidades Físicas" valor={totalUnidades.toLocaleString("es-CL")} icono="🔢" color="info" descripcion="Total unidades en almacén" />
+        </div>
+        <div className="col-12 col-sm-6 col-lg-3">
+          <KpiCard titulo="Stock Crítico" valor={stockCriticoCount} icono="⚠️" color="danger" descripcion="Productos bajo el mínimo" />
+        </div>
+        <div className="col-12 col-sm-6 col-lg-3">
+          <KpiCard titulo="Valor Estimado" valor={formatearMoneda(valorTotalInventario)} icono="💰" color="success" descripcion="Capital total inmovilizado" />
+        </div>
       </div>
 
       {/* Barra Modular de Filtros y Búsqueda */}
