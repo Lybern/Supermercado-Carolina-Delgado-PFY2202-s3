@@ -1,6 +1,6 @@
 # Supermercado Don Ahorro (Eri Market) - Gestión de Inventario y Carrito 🛒🐾
 
-Aplicación web interactiva desarrollada con **React 19**, **React Router**, **Vite** y **Bootstrap 5**, diseñada para la administración integral de existencias, catálogo de productos y simulación de reservas mediante carrito de compras.
+Aplicación web interactiva desarrollada con **React 19**, **React Router**, **Vite** y **Tailwind CSS**, diseñada para la administración integral de existencias, catálogo de productos y simulación de reservas mediante carrito de compras.
 
 - **Estudiante:** Carolina Delgado
 - **Repositorio Oficial:** [Supermercado-Carolina-Delgado-PFY2202-s3](https://github.com/Lybern/Supermercado-Carolina-Delgado-PFY2202-s3)
@@ -35,9 +35,10 @@ Aplicación web interactiva desarrollada con **React 19**, **React Router**, **V
 * **Nombre y Marca:** Validación de longitud mínima/máxima y saneamiento contra inyección de caracteres especiales o código malicioso.
 * **Numéricos:** Comprobación estricta de precio positivo y stock entero no negativo en `validaciones.js`.
 
-### 6. Arquitectura Modular y Código Limpio
+### 6. Arquitectura Modular y Estilos con Tailwind CSS
 * **Separación Estricta de Responsabilidades:** Distribución limpia en carpetas `components/`, `context/`, `data/`, `hooks/`, `pages/` y `utils/`.
 * **Componentes Livianos:** Cada componente y archivo de la interfaz de usuario se mantiene estrictamente por debajo de las 135 líneas de código, asegurando máxima legibilidad, bajo acoplamiento y alta cohesión.
+* **Tailwind Utility-First:** Estilos responsivos compilados con Purge/Tree-shaking para máxima velocidad y ligereza visual.
 
 ---
 
@@ -45,7 +46,7 @@ Aplicación web interactiva desarrollada con **React 19**, **React Router**, **V
 
 * **React 19:** Biblioteca base para interfaces de usuario declarativas.
 * **React Router:** Enrutamiento SPA con rutas dinámicas y navegación sin recargas.
-* **Bootstrap 5:** Framework CSS para maquetación adaptable, componentes responsive y paleta visual accesible.
+* **Tailwind CSS:** Framework CSS utility-first con PostCSS y Autoprefixer para diseño moderno y adaptable.
 * **Vite:** Herramienta de compilación y servidor de desarrollo ultrarrápido.
 
 ---
@@ -91,7 +92,7 @@ src/
 │   ├── FormularioInventario.jsx    # Campos de existencias (stock, mínimo, unidad, bodega)
 │   ├── FormularioProducto.jsx      # Integrador modular del formulario de nuevo producto
 │   ├── Header.jsx                  # Encabezado superior con botón de carrito dinámico
-│   ├── HeroBanner.jsx              # Banner de bienvenida y accesos principales
+│   ├── HeroBanner.jsx              # Banner de bienvenida naranja y accesos principales
 │   ├── InfoContacto.jsx            # Tarjeta de canales de atención e información de contacto
 │   ├── ItemCarrito.jsx             # Fila modular para artículo individual en carrito
 │   ├── KpiCard.jsx                 # Tarjeta modular de indicador clave (KPI)
@@ -123,5 +124,7 @@ src/
 │   └── validaciones.js             # Validaciones mediante expresiones regulares
 ├── App.jsx                         # Layout principal y declaración de rutas
 ├── main.jsx                        # Entrada raíz con BrowserRouter y basename de Vite
-└── index.css                       # Estilos personalizados, efectos 3D y tema visual
+├── index.css                       # Directivas y capas de componentes Tailwind CSS
+postcss.config.js                   # Configuración del procesador PostCSS para Tailwind
+tailwind.config.js                  # Configuración de tema, contenido y colores de Tailwind
 ```

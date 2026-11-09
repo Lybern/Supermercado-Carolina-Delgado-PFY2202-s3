@@ -48,13 +48,13 @@ export const obtenerEstadoStock = (producto) => {
 
   let res;
   if (stock === 0) {
-    res = { estado: "Agotado", badgeClass: "bg-dark", nivel: "agotado" };
+    res = { estado: "Agotado", badgeClass: "bg-slate-900 text-white", nivel: "agotado" };
   } else if (esStockCritico(producto)) {
-    res = { estado: "Crítico", badgeClass: "bg-danger", nivel: "critico" };
+    res = { estado: "Crítico", badgeClass: "bg-rose-100 text-rose-800 border border-rose-300", nivel: "critico" };
   } else if (esStockAlerta(producto)) {
-    res = { estado: "Alerta", badgeClass: "bg-warning text-dark", nivel: "alerta" };
+    res = { estado: "Alerta", badgeClass: "bg-amber-100 text-amber-900 border border-amber-300", nivel: "alerta" };
   } else {
-    res = { estado: "Óptimo", badgeClass: "bg-success", nivel: "optimo" };
+    res = { estado: "Óptimo", badgeClass: "bg-emerald-100 text-emerald-800 border border-emerald-300", nivel: "optimo" };
   }
 
   return {
