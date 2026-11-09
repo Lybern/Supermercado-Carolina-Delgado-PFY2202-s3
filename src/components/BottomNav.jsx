@@ -1,10 +1,14 @@
 import { NavLink } from "react-router";
+import useInventario from "../hooks/useInventario";
 
 /**
- * Menú Inferior de Navegación (Requerimiento evaluativo)
- * Permite navegar hacia el inventario, formulario de ingreso y páginas institucionales sin recargar la SPA.
+ * Menú Inferior de Navegación.
+ * Permite navegar hacia el inventario, formulario de ingreso, carrito y páginas institucionales.
  */
 function BottomNav() {
+  const { carrito } = useInventario();
+  const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
   const getNavClass = ({ isActive }) =>
     `btn d-flex flex-column flex-sm-row align-items-center justify-content-center gap-1 px-3 py-1 fw-semibold transition-all ${
       isActive
@@ -30,19 +34,35 @@ function BottomNav() {
               <span>Inicio</span>
             </NavLink>
 
-            {/* Listado en Tabla Requerido Semana 2 */}
+            {/* Listado en Tabla */}
             <NavLink to="/inventario" className={getNavClass}>
               <span className="fs-5">📋</span>
               <span>Tabla Inventario</span>
             </NavLink>
 
-            {/* Ingresar Artículos Requerido Semana 2 */}
+            {/* Ingresar Artículos */}
             <NavLink to="/nuevo-producto" className={getNavClass}>
               <span className="fs-5">➕</span>
               <span>Ingresar Artículo</span>
             </NavLink>
 
-            {/* Páginas Adicionales Institucionales */}
+            {/* Carrito de Compras */}
+            <NavLink to="/carrito" className={getNavClass}>
+              <span className="fs-5 position-relative">
+                🛒
+                {totalUnidades > 0 && (
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    style={{ fontSize: "0.6rem" }}
+                  >
+                    {totalUnidades}
+                  </span>
+                )}
+              </span>
+              <span>Carrito</span>
+            </NavLink>
+
+            {/* Páginas Institucionales */}
             <NavLink to="/tiendas" className={getNavClass}>
               <span className="fs-5">🏪</span>
               <span>Tiendas</span>

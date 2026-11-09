@@ -1,11 +1,15 @@
 import { Link, NavLink } from "react-router";
+import useInventario from "../hooks/useInventario";
 import OrangeTabbyCat from "./OrangeTabbyCat";
 
 /**
- * Encabezado institucional con identidad del supermercado
- * y menú de navegación superior con enlaces activos mediante NavLink.
+ * Encabezado institucional con identidad del supermercado,
+ * menú superior de navegación y acceso directo al carrito con contador dinámico.
  */
 function Header() {
+  const { carrito } = useInventario();
+  const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
+
   const getTopNavLinkClass = ({ isActive }) =>
     `nav-link px-3 py-1 fw-semibold rounded text-decoration-none ${
       isActive
@@ -42,7 +46,7 @@ function Header() {
         </Link>
 
         <div className="d-flex align-items-center gap-3">
-          {/* Navegación Principal Superior Requerida por la Semana 2 */}
+          {/* Navegación Principal Superior */}
           <nav
             className="d-none d-lg-flex align-items-center gap-1"
             aria-label="Navegación superior"
@@ -64,9 +68,18 @@ function Header() {
             </NavLink>
           </nav>
 
-          <span className="badge bg-warning text-dark fw-semibold px-2 py-2 d-none d-sm-inline-block">
-            Semana 2 - Context API
-          </span>
+          {/* Acceso al Carrito de Compras con Contador Reactivo */}
+          <Link
+            to="/carrito"
+            className="btn btn-warning text-dark fw-bold d-flex align-items-center gap-2 shadow-sm px-3 py-1"
+          >
+            <span>🛒 Carrito</span>
+            {totalUnidades > 0 && (
+              <span className="badge bg-danger rounded-pill">
+                {totalUnidades}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>
