@@ -27,17 +27,17 @@ Aplicación web interactiva desarrollada con **React 19**, **React Router**, **V
 
 ### 4. Carrito de Compras Interactivo (`/carrito`)
 * **Gestión de Unidades:** Controles para aumentar (`+`) y disminuir (`-`) cantidades por artículo.
-* **Cálculo Automático:** Desglose de subtotales, conteo total de unidades reservadas y valorización final en Pesos Chilenos (CLP).
+* **Cálculo Automático:** Desglose de subtotales, conteo total de unidades reservadas y valorización final en Pesos Chilenos (CLP) gestionado en `ResumenPedido.jsx`.
 * **Contador en Navegación:** Indicadores numéricos en tiempo real en la barra superior (`Header`) y en el menú inferior (`BottomNav`).
 
 ### 5. Validaciones Robustas con Expresiones Regulares
 * **SKU:** Formato alfanumérico en mayúsculas obligatorio (ej: `ABA-001`, `LAC-102`) y verificación contra duplicados.
 * **Nombre y Marca:** Validación de longitud mínima/máxima y saneamiento contra inyección de caracteres especiales o código malicioso.
-* **Numéricos:** Comprobación estricta de precio positivo y stock entero no negativo.
+* **Numéricos:** Comprobación estricta de precio positivo y stock entero no negativo en `validaciones.js`.
 
 ### 6. Arquitectura Modular y Código Limpio
-* **Separación de Responsabilidades:** Distribución estricta en carpetas `components/`, `context/`, `data/`, `hooks/`, `pages/` y `utils/`.
-* **Componentes Livianos:** Todos los archivos y vistas se mantienen por debajo de las 150 líneas de código para máxima legibilidad y facilidad de mantenimiento.
+* **Separación Estricta de Responsabilidades:** Distribución limpia en carpetas `components/`, `context/`, `data/`, `hooks/`, `pages/` y `utils/`.
+* **Componentes Livianos:** Cada componente y archivo de la interfaz de usuario se mantiene estrictamente por debajo de las 135 líneas de código, asegurando máxima legibilidad, bajo acoplamiento y alta cohesión.
 
 ---
 
@@ -83,36 +83,45 @@ Para clonar y ejecutar este proyecto en tu entorno local:
 ```text
 src/
 ├── components/
-│   ├── BottomNav.jsx         # Menú inferior con enlace activo y contador de carrito
-│   ├── FiltrosInventario.jsx # Barra modular de búsqueda y selector de categorías
-│   ├── Footer.jsx            # Pie de página institucional
-│   ├── Header.jsx            # Encabezado superior con botón de carrito dinámico
-│   ├── ItemCarrito.jsx       # Componente modular para fila de producto en carrito
-│   ├── KpiCard.jsx           # Tarjeta modular de indicador clave
-│   ├── KpiResumen.jsx        # Grilla modular de métricas ejecutivas
-│   ├── OrangeTabbyCat.jsx    # Mascota institucional del supermercado
-│   └── TablaInventario.jsx   # Tabla modular de catálogo con acceso a detalle
+│   ├── BottomNav.jsx               # Menú inferior con enlace activo y contador de carrito
+│   ├── FichaDetalleStock.jsx       # Cuadrícula modular de existencias y ubicación
+│   ├── FiltrosInventario.jsx       # Barra modular de búsqueda y selector de categorías
+│   ├── Footer.jsx                  # Pie de página institucional
+│   ├── FormularioDatosBasicos.jsx  # Campos comerciales básicos (SKU, nombre, marca, precio)
+│   ├── FormularioInventario.jsx    # Campos de existencias (stock, mínimo, unidad, bodega)
+│   ├── FormularioProducto.jsx      # Integrador modular del formulario de nuevo producto
+│   ├── Header.jsx                  # Encabezado superior con botón de carrito dinámico
+│   ├── HeroBanner.jsx              # Banner de bienvenida y accesos principales
+│   ├── InfoContacto.jsx            # Tarjeta de canales de atención e información de contacto
+│   ├── ItemCarrito.jsx             # Fila modular para artículo individual en carrito
+│   ├── KpiCard.jsx                 # Tarjeta modular de indicador clave (KPI)
+│   ├── KpiResumen.jsx              # Grilla modular de métricas ejecutivas
+│   ├── OrangeTabbyCat.jsx          # Mascota institucional del supermercado
+│   ├── ResumenPedido.jsx           # Panel modular de liquidación y total a pagar
+│   ├── TablaInventario.jsx         # Tabla modular de catálogo con acceso a detalle
+│   └── TarjetaProducto.jsx         # Card interactiva de producto con control de compra
 ├── context/
-│   ├── InventarioContext.js  # Definición desacoplada del contexto global
-│   ├── InventarioProvider.jsx # Proveedor global que implementa useReducer
-│   └── inventarioReducer.js  # Reducer puro con transacciones atómicas
+│   ├── InventarioContext.js        # Definición desacoplada del contexto global
+│   ├── InventarioProvider.jsx      # Proveedor global que implementa useReducer
+│   └── inventarioReducer.js        # Reducer puro con transacciones atómicas
 ├── data/
-│   └── inventarioData.js     # Catálogo inicial de productos y constantes
+│   └── inventarioData.js           # Catálogo inicial de productos y constantes
 ├── hooks/
-│   └── useInventario.js      # Hook personalizado para consumo del contexto
+│   └── useInventario.js            # Hook personalizado para consumo del contexto
 ├── pages/
-│   ├── Carrito.jsx           # Pantalla de carrito de compras y resumen de pedido
-│   ├── Contactanos.jsx       # Página institucional de contacto
-│   ├── DetalleProducto.jsx   # Vista de detalle con useParams y botón condicional
-│   ├── HomeInventario.jsx    # Panel principal de control de existencias
-│   ├── ListadoInventario.jsx # Vista tabular completa del inventario
-│   ├── NotFound.jsx          # Manejo de error 404 para rutas desconocidas
-│   ├── NuestrasTiendas.jsx   # Información de sucursales físicas y bodegas
-│   ├── NuevoProducto.jsx     # Formulario de registro con validaciones regex
-│   └── QuienesSomos.jsx      # Misión, visión e historia institucional
+│   ├── Carrito.jsx                 # Pantalla de carrito de compras y gestión de reservas
+│   ├── Contactanos.jsx             # Página institucional de contacto y consultas
+│   ├── DetalleProducto.jsx         # Vista de detalle dinámico con useParams
+│   ├── HomeInventario.jsx          # Panel principal con alternancia tarjetas/tabla
+│   ├── ListadoInventario.jsx       # Vista tabular completa del inventario
+│   ├── NotFound.jsx                # Manejo amigable de rutas no encontradas (404)
+│   ├── NuestrasTiendas.jsx         # Información de sucursales físicas y bodegas
+│   ├── NuevoProducto.jsx           # Vista de registro de nuevos productos
+│   └── QuienesSomos.jsx            # Misión, visión e historia institucional
 ├── utils/
-│   └── inventarioUtils.js    # Funciones puras de cálculo, validación y filtros
-├── App.jsx                   # Layout principal y declaración de rutas
-├── main.jsx                  # Entrada raíz con BrowserRouter y basename de Vite
-└── index.css                 # Estilos personalizados y utilidades de diseño
+│   ├── inventarioUtils.js          # Funciones puras de cálculo, formato y filtrado
+│   └── validaciones.js             # Validaciones mediante expresiones regulares
+├── App.jsx                         # Layout principal y declaración de rutas
+├── main.jsx                        # Entrada raíz con BrowserRouter y basename de Vite
+└── index.css                       # Estilos personalizados, efectos 3D y tema visual
 ```
