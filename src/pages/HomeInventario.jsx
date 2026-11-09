@@ -4,6 +4,7 @@ import useInventario from "../hooks/useInventario";
 import { CATEGORIAS_INVENTARIO } from "../data/inventarioData";
 import KpiResumen from "../components/KpiResumen";
 import FiltrosInventario from "../components/FiltrosInventario";
+import TarjetaProducto from "../components/TarjetaProducto";
 import TablaInventario from "../components/TablaInventario";
 import {
   filtrarProductos,
@@ -11,19 +12,20 @@ import {
 } from "../utils/inventarioUtils";
 
 /**
- * Panel Principal de Control de Inventario.
- * Gestiona métricas ejecutivas, filtros y vista rápida del catálogo.
+ * Vista Principal del Supermercado.
+ * Ofrece una experiencia amigable tipo catálogo online con opción de alternar a tabla.
  */
 function HomeInventario() {
-  const { productos, modificarStock } = useInventario();
+  const { productos, agregarAlCarrito, modificarStock } = useInventario();
 
   const [busqueda, setBusqueda] = useState("");
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todas");
   const [soloCriticos, setSoloCriticos] = useState(false);
+  const [modoVista, setModoVista] = useState("tarjetas"); // 'tarjetas' o 'tabla'
 
   const categorias = ["Todas", ...CATEGORIAS_INVENTARIO];
 
-  // Filtrado reactivo puro y métricas consolidadas
+  // Filtrado reactivo puro y métricas centralizadas
   const productosFiltrados = filtrarProductos(productos, {
     busqueda,
     categoria: categoriaSeleccionada,
@@ -34,30 +36,33 @@ function HomeInventario() {
 
   return (
     <div className="container py-4">
-      {/* Encabezado y Accesos Directos */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-          <h1 className="h2 fw-bold text-dark mb-1">
-            📦 Panel de Control de Inventario
-          </h1>
-          <p className="text-secondary mb-0">
-            Administración centralizada de existencias y reposición para Supermercado Don Ahorro Eri Market.
-          </p>
-        </div>
-        <div className="d-flex flex-wrap gap-2">
-          <Link to="/nuevo-producto" className="btn btn-success fw-semibold shadow-sm">
-            ➕ Ingresar Artículo
-          </Link>
-          <Link to="/inventario" className="btn btn-outline-success fw-semibold">
-            📋 Ver Listado en Tabla
-          </Link>
+      {/* Banner de Bienvenida Cálido y Amigable */}
+      <div className="hero-banner p-4 p-md-5 mb-4 rounded-4 shadow-sm text-white">
+        <div className="row align-items-center">
+          <div className="col-12 col-md-8">
+            <span className="badge bg-warning text-dark fw-bold px-3 py-1 mb-2">
+              🐾 Eri Market
+            </span>
+            <h1 className="display-6 fw-bold mb-2">Supermercado Don Ahorro</h1>
+            <p className="lead mb-3 text-white-50">
+              Tu tienda de confianza con productos de calidad, precios convenientes y stock en tiempo real.
+            </p>
+            <div className="d-flex flex-wrap gap-2">
+              <Link to="/carrito" className="btn btn-warning text-dark fw-bold px-3 shadow-sm">
+                🛒 Ver Mi Carrito
+              </Link>
+              <Link to="/nuevo-producto" className="btn btn-outline-light fw-semibold px-3">
+                ➕ Ingresar Artículo
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Componente Modular de KPIs */}
+      {/* Métricas Generales del Negocio */}
       <KpiResumen metricas={metricas} totalCategorias={CATEGORIAS_INVENTARIO.length} />
 
-      {/* Componente Modular de Filtros y Búsqueda */}
+      {/* Barra de Filtros y Búsqueda */}
       <FiltrosInventario
         busqueda={busqueda}
         onBusquedaChange={setBusqueda}
@@ -69,21 +74,58 @@ function HomeInventario() {
         stockCriticoCount={metricas.stockCriticoCount}
       />
 
-      {/* Tabla Modular de Productos */}
-      <div className="card shadow-sm border-0">
-        <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-          <h2 className="h6 mb-0 fw-bold text-dark">
-            Catálogo en Tiempo Real ({productosFiltrados.length} artículos visibles)
-          </h2>
-        </div>
-        <div className="card-body p-0">
-          <TablaInventario
-            productos={productosFiltrados}
-            onModificarStock={modificarStock}
-            mostrarLinkDetalle={true}
-          />
+      {/* Barra de Control de Vista (Tarjetas vs Tabla) */}
+      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h2 className="h5 fw-bold text-dark mb-0">
+          Catálogo de Productos ({productosFiltrados.length} artículos)
+        </h2>
+        <div className="btn-group btn-group-sm shadow-sm" role="group">
+          <button
+            type="button"
+            className={`btn ${modoVista === "tarjetas" ? "btn-success fw-bold" : "btn-outline-secondary"}`}
+            onClick={() => setModoVista("tarjetas")}
+          >
+            🛍️ Vista Tarjetas
+          </button>
+          <button
+            type="button"
+            className={`btn ${modoVista === "tabla" ? "btn-success fw-bold" : "btn-outline-secondary"}`}
+            onClick={() => setModoVista("tabla")}
+          >
+            📋 Vista Tabla
+          </button>
         </div>
       </div>
+
+      {/* Renderizado dinámico según la vista elegida */}
+      {productosFiltrados.length === 0 ? (
+        <div className="card shadow-sm border-0 text-center py-5">
+          <span className="fs-1 d-block mb-2">🔍</span>
+          <p className="text-muted fw-semibold mb-0">
+            No se encontraron productos coincidentes con los filtros seleccionados.
+          </p>
+        </div>
+      ) : modoVista === "tarjetas" ? (
+        <div className="row g-3">
+          {productosFiltrados.map((item) => (
+            <TarjetaProducto
+              key={item.id}
+              producto={item}
+              onAgregarAlCarrito={agregarAlCarrito}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="card shadow-sm border-0">
+          <div className="card-body p-0">
+            <TablaInventario
+              productos={productosFiltrados}
+              onModificarStock={modificarStock}
+              mostrarLinkDetalle={true}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

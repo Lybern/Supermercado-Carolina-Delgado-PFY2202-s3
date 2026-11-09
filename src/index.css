@@ -1,5 +1,5 @@
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 }
@@ -8,13 +8,47 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f4f6f8;
+  color: #2b2f33;
+}
+
+/* Encabezado con degradado moderno */
+.navbar {
+  background: linear-gradient(135deg, #198754 0%, #146c43 100%) !important;
+}
+
+/* Banner de Bienvenida */
+.hero-banner {
+  background: linear-gradient(135deg, #198754 0%, #0f5132 100%);
+  box-shadow: 0 10px 25px rgba(25, 135, 84, 0.2);
+}
+
+/* Tarjetas de Producto estilo e-commerce */
+.product-card {
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.09);
+}
+
+.product-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.3rem;
 }
 
 /* Menú inferior sticky */
 .bottom-navigation {
   z-index: 1030;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .bottom-navigation .btn {
@@ -27,15 +61,14 @@ body {
   transform: translateY(-2px);
 }
 
-/* Tarjetas y tablas */
+/* Tarjetas generales y tablas */
 .card {
-  border-radius: 12px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 14px;
 }
 
 .table th {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
 }
 
