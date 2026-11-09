@@ -6,6 +6,7 @@ export const TIPOS_ACCION = {
   AGREGAR_PRODUCTO: "AGREGAR_PRODUCTO",
   AGREGAR_AL_CARRITO: "AGREGAR_AL_CARRITO",
   DISMINUIR_CANTIDAD_CARRITO: "DISMINUIR_CANTIDAD_CARRITO",
+  MODIFICAR_STOCK: "MODIFICAR_STOCK",
 };
 
 /**
@@ -108,6 +109,19 @@ export function inventarioReducer(estado, accion) {
         ...estado,
         productos: productosActualizados,
         carrito: carritoActualizado,
+      };
+    }
+
+    case TIPOS_ACCION.MODIFICAR_STOCK: {
+      const productosActualizados = estado.productos.map((item) =>
+        String(item.id) === String(accion.id)
+          ? { ...item, stock: Math.max(0, item.stock + accion.delta) }
+          : item
+      );
+
+      return {
+        ...estado,
+        productos: productosActualizados,
       };
     }
 

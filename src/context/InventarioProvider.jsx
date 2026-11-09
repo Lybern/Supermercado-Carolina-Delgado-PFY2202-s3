@@ -1,29 +1,29 @@
-import { useState } from "react";
+import { useReducer } from "react";
 import InventarioContext from "./InventarioContext";
 import { productosIniciales } from "../data/inventarioData";
 import { validarProducto } from "../utils/inventarioUtils";
+import {
+  crearEstadoInicial,
+  inventarioReducer,
+  TIPOS_ACCION,
+} from "./inventarioReducer";
 
 /**
- * Inicializador de estado que realiza una copia superficial inmutable de los datos base.
- */
-function construirEstadoInicial() {
-  return productosIniciales.map((p) => ({ ...p }));
-}
-
-/**
- * Proveedor de Context API para gestión global del inventario.
- * Mantiene la persistencia en memoria durante la navegación de la SPA.
+ * Proveedor de Context API para gestión global del inventario y carrito.
+ * Utiliza useReducer para garantizar transacciones atómicas e inmutabilidad en memoria.
  */
 export function InventarioProvider({ children }) {
-  const [productos, setProductos] = useState(construirEstadoInicial);
+  const [estado, dispatch] = useReducer(
+    inventarioReducer,
+    productosIniciales,
+    crearEstadoInicial
+  );
 
   /**
-   * Agrega un nuevo producto al estado global de manera inmutable.
-   * Realiza validaciones de obligatoriedad, tipos de datos y SKU único.
+   * Agrega un nuevo producto validado al catálogo global mediante dispatch.
    */
   const agregarProducto = (nuevo) => {
-    // 1. Validar producto con expresiones regulares y reglas de negocio
-    const validacion = validarProducto(nuevo, productos);
+    const validacion = validarProducto(nuevo, estado.productos);
     if (!validacion.esValido) {
       return {
         exito: false,
@@ -31,49 +31,67 @@ export function InventarioProvider({ children }) {
       };
     }
 
-    const precioNum = Number(nuevo.precio);
-    const stockNum = Number(nuevo.stock);
-    const stockMinNum = Number(nuevo.stockMinimo) || 0;
-
-    // 4. Construir objeto inmutable con ID único seguro
     const nuevoItem = {
-      id: typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `prod-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      id:
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `prod-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       sku: nuevo.sku.trim().toUpperCase(),
       nombre: nuevo.nombre.trim(),
       marca: nuevo.marca.trim(),
       categoria: nuevo.categoria || "Abarrotes",
-      precio: precioNum,
-      stock: stockNum,
-      stockMinimo: stockMinNum,
+      precio: Number(nuevo.precio),
+      stock: Number(nuevo.stock),
+      stockMinimo: Number(nuevo.stockMinimo) || 0,
       unidad: nuevo.unidad || "Unidad",
       ubicacion: nuevo.ubicacion?.trim() || "Bodega Central",
     };
 
-    // 5. Actualización inmutable del estado global
-    setProductos((previos) => [...previos, nuevoItem]);
+    dispatch({
+      type: TIPOS_ACCION.AGREGAR_PRODUCTO,
+      producto: nuevoItem,
+    });
 
     return { exito: true, producto: nuevoItem };
   };
 
   /**
-   * Modifica el stock de un producto existente de forma inmutable.
-   * Evita stocks negativos utilizando Math.max(0, ...).
+   * Despacha la orden atómica de agregar al carrito (descuenta stock del inventario).
+   */
+  const agregarAlCarrito = (productoId) => {
+    dispatch({
+      type: TIPOS_ACCION.AGREGAR_AL_CARRITO,
+      productoId,
+    });
+  };
+
+  /**
+   * Despacha la orden atómica de disminuir cantidad del carrito (reintegra stock al inventario).
+   */
+  const disminuirCantidadCarrito = (productoId) => {
+    dispatch({
+      type: TIPOS_ACCION.DISMINUIR_CANTIDAD_CARRITO,
+      productoId,
+    });
+  };
+
+  /**
+   * Ajuste directo de existencias en tabla (+1 / -1) manteniendo consistencia.
    */
   const modificarStock = (id, delta) => {
-    setProductos((previos) =>
-      previos.map((item) => {
-        if (item.id === id) {
-          const nuevoStock = Math.max(0, item.stock + delta);
-          return { ...item, stock: nuevoStock };
-        }
-        return item;
-      })
-    );
+    dispatch({
+      type: TIPOS_ACCION.MODIFICAR_STOCK,
+      id,
+      delta,
+    });
   };
 
   const value = {
-    productos,
+    productos: estado.productos,
+    carrito: estado.carrito,
     agregarProducto,
+    agregarAlCarrito,
+    disminuirCantidadCarrito,
     modificarStock,
   };
 
