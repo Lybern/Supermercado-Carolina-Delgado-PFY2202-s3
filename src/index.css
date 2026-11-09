@@ -26,11 +26,43 @@ body {
   box-shadow: 0 4px 20px rgba(5, 150, 105, 0.25) !important;
 }
 
-/* Banner de Bienvenida Cálido */
+/* Banner de Bienvenida Cálido y Centrado */
 .hero-banner {
   background: linear-gradient(135deg, #059669 0%, #065f46 100%);
-  box-shadow: 0 12px 30px rgba(5, 150, 105, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 15px 35px rgba(5, 150, 105, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mascot-glow {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.mascot-glow:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.5) !important;
+}
+
+.feature-pill {
+  transition: all 0.2s ease;
+  cursor: default;
+  font-size: 0.85rem;
+  border-radius: 20px;
+}
+
+.feature-pill:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+.hero-btn {
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.hero-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Tarjetas KPI con animaciones al pasar el mouse */
