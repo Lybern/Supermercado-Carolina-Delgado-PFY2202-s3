@@ -11,7 +11,7 @@ import {
 const CLAVE_STORAGE = "supermercado_don_ahorro_v1";
 
 /**
- * Proveedor de Context API para gestión global del inventario y carrito.
+ * Proveedor global para la gestión integral de inventario y carrito.
  * Utiliza useReducer para garantizar transacciones atómicas y sincroniza con localStorage.
  */
 export function InventarioProvider({ children }) {

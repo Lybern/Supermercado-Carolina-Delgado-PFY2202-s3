@@ -61,7 +61,7 @@ function ListadoInventario() {
             <span>📋</span> Listado en Tabla de Artículos
           </h1>
           <p className="text-muted mb-0">
-            Vista tabular completa del inventario sincronizada en tiempo real mediante Context API.
+            Vista tabular completa del inventario sincronizada en tiempo real con existencias actualizadas.
           </p>
         </div>
         <div className="mt-3 mt-md-0 d-flex gap-2">

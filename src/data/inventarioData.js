@@ -1,9 +1,6 @@
 /**
  * Fuente de datos centralizada para el inventario de Supermercado Don Ahorro (Eri Market).
- * 
- * Cumple con los requerimientos de la Semana 2 (Forma B):
- * - Incluye obligatoriamente: Nombre, Marca y Tipo de producto (categoría).
- * - Centraliza categorías y el estado inicial compartido (sugerencia de retroalimentación docente).
+ * Proporciona el catálogo inicial de productos, categorías y constantes.
  */
 
 export const CATEGORIAS_INVENTARIO = [

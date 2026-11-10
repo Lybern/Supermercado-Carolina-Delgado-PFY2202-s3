@@ -6,8 +6,8 @@ import FormularioProducto from "../components/FormularioProducto";
 
 /**
  * Página para el ingreso y registro de artículos al inventario.
- * Permite registrar nuevos productos en el estado global (Context API)
- * con validaciones y retroalimentación accesible.
+ * Permite registrar nuevos productos en el catálogo de inventario
+ * con validaciones y retroalimentación en tiempo real.
  */
 function NuevoProducto() {
   const navigate = useNavigate();
