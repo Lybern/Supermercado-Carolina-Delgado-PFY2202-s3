@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useEffect } from "react";
 import InventarioContext from "./InventarioContext";
 import { productosIniciales } from "../data/inventarioData";
 import { validarProducto } from "../utils/inventarioUtils";
@@ -8,9 +8,11 @@ import {
   TIPOS_ACCION,
 } from "./inventarioReducer";
 
+const CLAVE_STORAGE = "supermercado_don_ahorro_v1";
+
 /**
  * Proveedor de Context API para gestión global del inventario y carrito.
- * Utiliza useReducer para garantizar transacciones atómicas e inmutabilidad en memoria.
+ * Utiliza useReducer para garantizar transacciones atómicas y sincroniza con localStorage.
  */
 export function InventarioProvider({ children }) {
   const [estado, dispatch] = useReducer(
@@ -18,6 +20,17 @@ export function InventarioProvider({ children }) {
     productosIniciales,
     crearEstadoInicial
   );
+
+  // Sincronización persistente con localStorage
+  useEffect(() => {
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem(CLAVE_STORAGE, JSON.stringify(estado));
+      }
+    } catch (e) {
+      // Manejo silencioso en caso de bloqueo de almacenamiento
+    }
+  }, [estado]);
 
   /**
    * Agrega un nuevo producto validado al catálogo global mediante dispatch.
@@ -55,9 +68,6 @@ export function InventarioProvider({ children }) {
     return { exito: true, producto: nuevoItem };
   };
 
-  /**
-   * Despacha la orden atómica de agregar al carrito (descuenta stock del inventario).
-   */
   const agregarAlCarrito = (productoId) => {
     dispatch({
       type: TIPOS_ACCION.AGREGAR_AL_CARRITO,
@@ -65,9 +75,6 @@ export function InventarioProvider({ children }) {
     });
   };
 
-  /**
-   * Despacha la orden atómica de disminuir cantidad del carrito (reintegra stock al inventario).
-   */
   const disminuirCantidadCarrito = (productoId) => {
     dispatch({
       type: TIPOS_ACCION.DISMINUIR_CANTIDAD_CARRITO,
@@ -75,14 +82,17 @@ export function InventarioProvider({ children }) {
     });
   };
 
-  /**
-   * Ajuste directo de existencias en tabla (+1 / -1) manteniendo consistencia.
-   */
   const modificarStock = (id, delta) => {
     dispatch({
       type: TIPOS_ACCION.MODIFICAR_STOCK,
       id,
       delta,
+    });
+  };
+
+  const vaciarCarrito = () => {
+    dispatch({
+      type: TIPOS_ACCION.VACIAR_CARRITO,
     });
   };
 
@@ -93,6 +103,7 @@ export function InventarioProvider({ children }) {
     agregarAlCarrito,
     disminuirCantidadCarrito,
     modificarStock,
+    vaciarCarrito,
   };
 
   return (

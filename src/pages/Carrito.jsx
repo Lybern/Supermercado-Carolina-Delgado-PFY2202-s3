@@ -9,7 +9,7 @@ import ResumenPedido from "../components/ResumenPedido";
  * Permite gestionar las unidades reservadas y sincronizarlas con el inventario general.
  */
 function Carrito() {
-  const { productos, carrito, agregarAlCarrito, disminuirCantidadCarrito } = useInventario();
+  const { productos, carrito, agregarAlCarrito, disminuirCantidadCarrito, vaciarCarrito } = useInventario();
   const [aviso, setAviso] = useState("");
 
   const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
@@ -36,6 +36,13 @@ function Carrito() {
       setAviso(`"${prod?.nombre || "El artículo"}" fue retirado del carrito.`);
     } else {
       setAviso(`Se disminuyó la cantidad de "${prod?.nombre}".`);
+    }
+  };
+
+  const handleVaciar = () => {
+    if (window.confirm("¿Seguro que deseas vaciar el carrito? Todas las unidades volverán al inventario.")) {
+      vaciarCarrito();
+      setAviso("El carrito ha sido vaciado y las existencias han vuelto al inventario.");
     }
   };
 
@@ -114,6 +121,7 @@ function Carrito() {
               totalArticulos={carrito.length}
               totalPagar={totalPagar}
               onFinalizar={() => alert("¡Pedido simulado con éxito! Las existencias se han reservado.")}
+              onVaciar={handleVaciar}
             />
           </div>
         </div>

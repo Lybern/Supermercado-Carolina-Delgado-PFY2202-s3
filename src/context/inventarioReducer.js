@@ -6,15 +6,29 @@ export const TIPOS_ACCION = {
   AGREGAR_AL_CARRITO: "AGREGAR_AL_CARRITO",
   DISMINUIR_CANTIDAD_CARRITO: "DISMINUIR_CANTIDAD_CARRITO",
   MODIFICAR_STOCK: "MODIFICAR_STOCK",
+  VACIAR_CARRITO: "VACIAR_CARRITO",
 };
 
+const CLAVE_STORAGE = "supermercado_don_ahorro_v1";
+
 /**
- * Función pura de inicialización para useReducer.
- * Establece el inventario con copia inmutable y el carrito vacío.
- * @param {Array} productosIniciales
- * @returns {{ productos: Array, carrito: Array }}
+ * Función de inicialización para useReducer con soporte para persistencia localStorage.
  */
 export function crearEstadoInicial(productosIniciales = []) {
+  try {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const guardado = window.localStorage.getItem(CLAVE_STORAGE);
+      if (guardado) {
+        const parseado = JSON.parse(guardado);
+        if (Array.isArray(parseado.productos) && Array.isArray(parseado.carrito)) {
+          return parseado;
+        }
+      }
+    }
+  } catch (e) {
+    // Fallback a catálogo base si falla localStorage
+  }
+
   return {
     productos: productosIniciales.map((p) => ({ ...p })),
     carrito: [],
@@ -22,48 +36,30 @@ export function crearEstadoInicial(productosIniciales = []) {
 }
 
 /**
- * Reducer puro para la gestión atómica de inventario y carrito de compras.
- * Garantiza la ley de conservación: stock disponible + unidades en carrito = total.
- * @param {{ productos: Array, carrito: Array }} estado
- * @param {{ type: string, payload?: any, producto?: any, productoId?: string|number }} accion
- * @returns {{ productos: Array, carrito: Array }}
+ * Reducer puro para la gestión atómica de inventario y carrito.
+ * Invariante: stock + unidades_en_carrito = constante.
  */
 export function inventarioReducer(estado, accion) {
   switch (accion.type) {
-    case TIPOS_ACCION.AGREGAR_PRODUCTO: {
+    case TIPOS_ACCION.AGREGAR_PRODUCTO:
       return {
         ...estado,
         productos: [...estado.productos, accion.producto],
       };
-    }
 
     case TIPOS_ACCION.AGREGAR_AL_CARRITO: {
-      const producto = estado.productos.find(
-        (item) => String(item.id) === String(accion.productoId)
+      const id = String(accion.productoId);
+      const prod = estado.productos.find((p) => String(p.id) === id);
+      if (!prod || Number(prod.stock) <= 0) return estado;
+
+      const productosActualizados = estado.productos.map((p) =>
+        String(p.id) === id ? { ...p, stock: p.stock - 1 } : p
       );
 
-      // Si no existe o no tiene disponibilidad, el estado no se modifica
-      if (!producto || Number(producto.stock) <= 0) {
-        return estado;
-      }
-
-      // 1. Transacción atómica: restar 1 unidad del stock de inventario
-      const productosActualizados = estado.productos.map((item) =>
-        String(item.id) === String(accion.productoId)
-          ? { ...item, stock: item.stock - 1 }
-          : item
-      );
-
-      // 2. Transacción atómica: sumar 1 unidad al carrito o crear la entrada
-      const entradaExistente = estado.carrito.find(
-        (entrada) => String(entrada.productoId) === String(accion.productoId)
-      );
-
-      const carritoActualizado = entradaExistente
-        ? estado.carrito.map((entrada) =>
-            String(entrada.productoId) === String(accion.productoId)
-              ? { ...entrada, cantidad: entrada.cantidad + 1 }
-              : entrada
+      const existe = estado.carrito.find((c) => String(c.productoId) === id);
+      const carritoActualizado = existe
+        ? estado.carrito.map((c) =>
+            String(c.productoId) === id ? { ...c, cantidad: c.cantidad + 1 } : c
           )
         : [...estado.carrito, { productoId: accion.productoId, cantidad: 1 }];
 
@@ -75,34 +71,20 @@ export function inventarioReducer(estado, accion) {
     }
 
     case TIPOS_ACCION.DISMINUIR_CANTIDAD_CARRITO: {
-      const entrada = estado.carrito.find(
-        (item) => String(item.productoId) === String(accion.productoId)
-      );
-
-      if (!entrada) {
-        return estado;
-      }
+      const id = String(accion.productoId);
+      const entrada = estado.carrito.find((c) => String(c.productoId) === id);
+      if (!entrada) return estado;
 
       const nuevaCantidad = entrada.cantidad - 1;
-
-      // 1. Transacción atómica: reintegrar 1 unidad al stock de inventario
-      const productosActualizados = estado.productos.map((item) =>
-        String(item.id) === String(accion.productoId)
-          ? { ...item, stock: item.stock + 1 }
-          : item
+      const productosActualizados = estado.productos.map((p) =>
+        String(p.id) === id ? { ...p, stock: p.stock + 1 } : p
       );
 
-      // 2. Transacción atómica: restar del carrito; si llega a 0, se elimina con filter()
-      const carritoActualizado =
-        nuevaCantidad === 0
-          ? estado.carrito.filter(
-              (item) => String(item.productoId) !== String(accion.productoId)
-            )
-          : estado.carrito.map((item) =>
-              String(item.productoId) === String(accion.productoId)
-                ? { ...item, cantidad: nuevaCantidad }
-                : item
-            );
+      const carritoActualizado = nuevaCantidad === 0
+        ? estado.carrito.filter((c) => String(c.productoId) !== id)
+        : estado.carrito.map((c) =>
+            String(c.productoId) === id ? { ...c, cantidad: nuevaCantidad } : c
+          );
 
       return {
         ...estado,
@@ -111,18 +93,25 @@ export function inventarioReducer(estado, accion) {
       };
     }
 
-    case TIPOS_ACCION.MODIFICAR_STOCK: {
-      const productosActualizados = estado.productos.map((item) =>
-        String(item.id) === String(accion.id)
-          ? { ...item, stock: Math.max(0, item.stock + accion.delta) }
-          : item
-      );
-
+    case TIPOS_ACCION.MODIFICAR_STOCK:
       return {
         ...estado,
-        productos: productosActualizados,
+        productos: estado.productos.map((p) =>
+          String(p.id) === String(accion.id)
+            ? { ...p, stock: Math.max(0, p.stock + accion.delta) }
+            : p
+        ),
       };
-    }
+
+    case TIPOS_ACCION.VACIAR_CARRITO:
+      return {
+        ...estado,
+        productos: estado.productos.map((prod) => {
+          const item = estado.carrito.find((c) => String(c.productoId) === String(prod.id));
+          return item ? { ...prod, stock: prod.stock + item.cantidad } : prod;
+        }),
+        carrito: [],
+      };
 
     default:
       return estado;

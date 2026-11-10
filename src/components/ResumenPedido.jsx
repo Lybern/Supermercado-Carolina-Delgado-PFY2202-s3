@@ -4,7 +4,7 @@ import { formatearMoneda } from "../utils/inventarioUtils";
 /**
  * Componente modular para el resumen de pedido en el carrito de compras.
  */
-function ResumenPedido({ totalUnidades, totalArticulos, totalPagar, onFinalizar }) {
+function ResumenPedido({ totalUnidades, totalArticulos, totalPagar, onFinalizar, onVaciar }) {
   return (
     <div className="card shadow-sm border-0 sticky-top" style={{ top: "1rem" }}>
       <div className="card-header bg-white py-3 border-bottom">
@@ -34,6 +34,15 @@ function ResumenPedido({ totalUnidades, totalArticulos, totalPagar, onFinalizar 
         >
           Finalizar Pedido
         </button>
+        {onVaciar && (
+          <button
+            type="button"
+            className="btn btn-outline-danger w-100 btn-sm mb-2"
+            onClick={onVaciar}
+          >
+            🗑️ Vaciar Carrito
+          </button>
+        )}
         <Link to="/inventario" className="btn btn-outline-secondary w-100 btn-sm">
           Continuar Agregando
         </Link>

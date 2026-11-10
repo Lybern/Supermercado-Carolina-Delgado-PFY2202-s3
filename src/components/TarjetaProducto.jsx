@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router";
 import {
   formatearMoneda,
@@ -16,19 +17,25 @@ const ICONOS_CATEGORIA = {
 };
 
 /**
- * Tarjeta interactiva de producto con animaciones al pasar el mouse.
- * Presenta el artículo de forma atractiva con acciones rápidas de compra y detalle.
+ * Tarjeta interactiva de producto con animaciones y confirmación inmediata al agregar.
  */
 function TarjetaProducto({ producto, onAgregarAlCarrito }) {
+  const [agregadoReciente, setAgregadoReciente] = useState(false);
   const sinStock = Number(producto.stock) === 0;
   const esCritico = esStockCritico(producto);
   const estadoInfo = obtenerEstadoStock(producto);
   const icono = ICONOS_CATEGORIA[producto.categoria] || "📦";
 
+  const handleAgregarClick = () => {
+    if (sinStock) return;
+    onAgregarAlCarrito(producto.id);
+    setAgregadoReciente(true);
+    setTimeout(() => setAgregadoReciente(false), 1200);
+  };
+
   return (
     <div className="col-12 col-sm-6 col-md-4 col-xl-3">
       <div className={`card h-100 shadow-sm border-0 product-card transition-all ${esCritico ? "border-danger border-top border-3" : ""}`}>
-        {/* Cabecera visual con ícono animado */}
         <div className="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
           <span className="badge category-tag shadow-sm px-3 py-1 d-flex align-items-center gap-1">
             <span className="product-emoji fs-5">{icono}</span>
@@ -39,7 +46,6 @@ function TarjetaProducto({ producto, onAgregarAlCarrito }) {
           </span>
         </div>
 
-        {/* Cuerpo del producto */}
         <div className="card-body p-3 d-flex flex-column">
           <div className="mb-2">
             <span className="text-muted small fw-mono"><code>{producto.sku}</code></span>
@@ -61,17 +67,18 @@ function TarjetaProducto({ producto, onAgregarAlCarrito }) {
               </span>
             </div>
 
-            {/* Botones de acción */}
             <div className="d-flex gap-2">
               <button
                 type="button"
-                className="btn btn-success btn-sm flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1 interactive-add-btn"
-                onClick={() => onAgregarAlCarrito(producto.id)}
+                className={`btn btn-sm flex-grow-1 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-1 transition-all ${
+                  agregadoReciente ? "btn-dark" : "btn-success"
+                }`}
+                onClick={handleAgregarClick}
                 disabled={sinStock}
                 title={sinStock ? "Sin existencias disponibles" : "Agregar una unidad al carrito"}
               >
-                <span>🛒</span>
-                <span>{sinStock ? "Agotado" : "Agregar"}</span>
+                <span>{agregadoReciente ? "✅" : "🛒"}</span>
+                <span>{sinStock ? "Agotado" : agregadoReciente ? "¡Agregado!" : "Agregar"}</span>
               </button>
 
               <Link
