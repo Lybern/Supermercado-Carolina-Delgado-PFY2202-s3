@@ -95,11 +95,18 @@ function Carrito() {
       ) : (
         <div className="row g-4">
           <div className="col-12 col-lg-8">
-            <div className="card shadow-sm border-0">
-              <div className="card-header bg-white py-3">
-                <h2 className="h6 mb-0 fw-bold text-dark">
-                  Artículos en el Carrito ({totalUnidades} unidades)
-                </h2>
+            <div className="card shadow-md border-0 rounded-2xl overflow-hidden">
+              <div className="card-header bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white py-3.5 px-4 d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center gap-2.5">
+                  <span className="fs-4 p-1.5 bg-white/20 rounded-circle d-inline-flex">🛒</span>
+                  <div>
+                    <h2 className="h6 mb-0 fw-bold text-white">Artículos en tu Canasta de Compra</h2>
+                    <small className="text-emerald-100 fw-medium">Sincronización de existencias en tiempo real</small>
+                  </div>
+                </div>
+                <span className="badge bg-amber-400 text-slate-900 fw-black px-3 py-1 rounded-pill shadow-xs">
+                  {totalUnidades} {totalUnidades === 1 ? "unidad" : "unidades"}
+                </span>
               </div>
               <ul className="list-group list-group-flush">
                 {carrito.map((item) => (

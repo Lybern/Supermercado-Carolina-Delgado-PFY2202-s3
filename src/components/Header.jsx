@@ -4,53 +4,44 @@ import OrangeTabbyCat from "./OrangeTabbyCat";
 
 /**
  * Encabezado institucional con identidad del supermercado,
- * menú superior de navegación y acceso directo al carrito con contador dinámico.
+ * menú superior de navegación y botón de carrito posicionado en el extremo superior.
  */
 function Header() {
   const { carrito } = useInventario();
   const totalUnidades = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
   const getTopNavLinkClass = ({ isActive }) =>
-    `nav-link px-3 py-1 fw-semibold rounded text-decoration-none ${
+    `px-3 py-1.5 font-semibold text-sm rounded-xl transition no-underline ${
       isActive
-        ? "bg-white text-success shadow-sm"
-        : "text-white opacity-75"
+        ? "bg-white text-emerald-700 shadow-sm"
+        : "text-white/85 hover:text-white hover:bg-white/10"
     }`;
 
   return (
-    <header className="navbar navbar-expand-lg navbar-dark bg-success shadow-sm py-2">
-      <div className="container">
-        <Link
-          to="/"
-          className="navbar-brand d-flex align-items-center gap-2 fw-bold text-white text-decoration-none"
-        >
-          <span className="fs-3">🛒</span>
-          <div className="d-flex flex-column">
-            <div className="d-flex align-items-center gap-2 fs-4">
-              <span>Supermercado Don Ahorro</span>
-              <OrangeTabbyCat
-                size={38}
-                className="ms-1 me-1 shadow-sm rounded-circle bg-white p-1"
-              />
-              <span className="badge bg-warning text-dark fs-6 px-2 py-1">
+    <header className="navbar bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-700 shadow-md py-3 text-white">
+      <div className="container flex flex-wrap items-center justify-between gap-4">
+        {/* Identidad institucional a la izquierda */}
+        <Link to="/" className="flex items-center gap-3 text-white no-underline group">
+          <span className="text-3xl p-1 bg-white/10 rounded-2xl shadow-inner">🛒</span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-lg sm:text-xl font-extrabold tracking-tight text-white drop-shadow-sm">
+                Supermercado Don Ahorro
+              </span>
+              <OrangeTabbyCat size={32} className="rounded-full bg-white p-0.5 shadow-sm" />
+              <span className="bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">
                 Eri Market
               </span>
             </div>
-            <span
-              className="text-white-50 fw-normal"
-              style={{ fontSize: "0.78rem", letterSpacing: "0.5px" }}
-            >
+            <span className="text-xs text-emerald-100 font-medium tracking-wide">
               🐾 Propiedad de Eri Market
             </span>
           </div>
         </Link>
 
-        <div className="d-flex align-items-center gap-3">
-          {/* Navegación Principal Superior */}
-          <nav
-            className="d-none d-lg-flex align-items-center gap-1"
-            aria-label="Navegación superior"
-          >
+        {/* Navegación y Botón de Carrito a la derecha, con amplio espaciado */}
+        <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Navegación superior">
             <NavLink to="/" className={getTopNavLinkClass} end>
               Inicio
             </NavLink>
@@ -68,14 +59,15 @@ function Header() {
             </NavLink>
           </nav>
 
-          {/* Acceso al Carrito de Compras con Contador Reactivo */}
           <Link
             to="/carrito"
-            className="btn btn-warning text-dark fw-bold d-flex align-items-center gap-2 shadow-sm px-3 py-1"
+            className="btn bg-amber-400 hover:bg-amber-500 text-slate-900 font-extrabold px-3.5 py-2 rounded-xl shadow flex items-center gap-2 transition active:scale-95 border-0"
+            title="Ir al carrito de compras"
           >
-            <span>🛒 Carrito</span>
+            <span className="text-lg">🛒</span>
+            <span className="text-sm">Carrito</span>
             {totalUnidades > 0 && (
-              <span className="badge bg-danger rounded-pill">
+              <span className="bg-rose-600 text-white text-xs font-black px-2 py-0.5 rounded-full shadow-sm animate-pulse">
                 {totalUnidades}
               </span>
             )}
